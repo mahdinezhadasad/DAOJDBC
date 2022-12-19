@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 
 import java.util.Objects;
 
@@ -18,7 +20,12 @@ public class Book {
     private String isbn;
     private String publisher;
 
+    @Transient
     private Author authorId;
+    
+    public Author getAuthorId() {
+        return authorId;
+    }
     
     public Book() {
     

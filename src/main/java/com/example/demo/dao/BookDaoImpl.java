@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.domain.Book;
+import jakarta.persistence.Transient;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -12,7 +13,8 @@ import java.sql.Statement;
 public class BookDaoImpl implements BookDao{
     
     private final DataSource source;
-    
+
+    @Transient
     private final AuthorDao authorDao;
     
     public BookDaoImpl(DataSource source, AuthorDao authorDao) {
@@ -94,6 +96,9 @@ public class BookDaoImpl implements BookDao{
                 
                 ps.setLong (4,book.getAuthor ().getId ());
             }
+            else {
+                ps.setNull (4,-5);
+            }
             ps.execute();
           
             
@@ -137,6 +142,9 @@ public class BookDaoImpl implements BookDao{
                 ps.setLong(4, book.getAuthor ().getId ());
                 
             }
+            ps.setLong (5,book.getId ());
+            
+            
             
             ps.execute();
             
