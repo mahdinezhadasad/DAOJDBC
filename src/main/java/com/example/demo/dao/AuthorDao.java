@@ -6,12 +6,12 @@ import java.sql.SQLException;
 
 public interface AuthorDao {
     
-    Author getById(Long id) throws SQLException;
-    Author  findAuthorByName(String firstName,String lastName);
+    Long getById(Long id) throws SQLException;
+    Long findAuthorByName(String firstName, String lastName);
     
-    Author saveNewAuthor(Author author);
+    Long saveNewAuthor(Author author);
     
-    Author updatedAuthor(Author saved);
+    Long updatedAuthor(Long saved);
     
     void deleteAuthorById(Long id);
 }
