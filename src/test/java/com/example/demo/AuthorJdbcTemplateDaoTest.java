@@ -14,7 +14,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.TransientDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -67,6 +72,69 @@ public class AuthorJdbcTemplateDaoTest {
     }
     
     @Test
+    void testFindAllBooks(){
+      List<Book> books = bookDao.findAllBooks ();
+      
+      assertThat (books).isNotNull ();
+      assertThat (books.size ()).isGreaterThan (4);
+    
+    }
+    
+    @Test
+    void findAllBooksPage1(){
+    
+        
+        List<Book>  books = bookDao.findAllBooks (10,0);
+        
+        assertThat (books).isNotNull();
+        assertThat (books.size()).isEqualTo (5);
+    
+    }
+    
+    
+    @Test
+    void findAllBooksPage2(){
+        
+        
+        List<Book>  books = bookDao.findAllBooks (10,100);
+        
+        assertThat (books).isNotNull();
+        assertThat (books.size()).isEqualTo (0);
+        
+    }
+    
+    @Test
+    void testFindAllBooks_pageable(){
+        List<Book> books = bookDao.findAllBooks (PageRequest.of(0,10));
+        
+        assertThat (books).isNotNull ();
+        assertThat (books.size ()).isGreaterThan (4);
+        
+    }
+    
+    @Test
+    void findAllBooksPage1_pageable(){
+        
+        
+        List<Book>  books = bookDao.findAllBooks (PageRequest.of(1,10));
+        
+        assertThat (books).isNotNull();
+        assertThat (books.size()).isEqualTo (5);
+        
+    }
+    
+    
+    @Test
+    void findAllBooksPage2_pageable(){
+        
+        
+        List<Book>  books = bookDao.findAllBooks (PageRequest.of(10,10));
+        
+        assertThat (books).isNotNull();
+        assertThat (books.size()).isEqualTo (0);
+        
+    }
+    @Test
     void testSaveBook() {
         Book book = new Book();
         book.setIsbn("1234");
@@ -78,6 +146,7 @@ public class AuthorJdbcTemplateDaoTest {
         
         assertThat(saved).isNotNull();
     }
+    
     
     @Test
     void testGetBookByName() {
@@ -131,8 +200,7 @@ public class AuthorJdbcTemplateDaoTest {
         Author author = new Author();
         author.setFirstName("john");
         author.setLastName("t222");
-        
-        Author saved = authorDao.saveNewAuthor(author);
+                Author saved = authorDao.saveNewAuthor(author);
         
         assertThat(saved).isNotNull();
     }
@@ -151,4 +219,16 @@ public class AuthorJdbcTemplateDaoTest {
         
         assertThat(author.getId()).isNotNull();
     }
+    
+    @Test
+    void findAllBooksPage1_SortByTitle(){
+    
+        
+        List<Book>  books = bookDao.findAllBooksSortByTitle (PageRequest.of (0,10, Sort.by (Sort.Order.desc ("title"))));
+        
+        assertThat (books).isNotNull();
+        assertThat (books.size ()).isEqualTo (5);
+    
+    }
+    
 }

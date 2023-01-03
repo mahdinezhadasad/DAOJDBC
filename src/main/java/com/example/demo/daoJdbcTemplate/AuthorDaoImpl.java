@@ -1,9 +1,13 @@
 package com.example.demo.daoJdbcTemplate;
 
 import com.example.demo.domain.Author;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @Component
@@ -23,6 +27,21 @@ public class AuthorDaoImpl implements AuthorDao {
         //return jdbcTemplate.queryForObject ("SELECT * FROM author where id = ?", getRowMapper (), id);
         
         return jdbcTemplate.query (sql ,new AuthorExtractor (),id);
+    }
+    @Override
+    public List<Author> findAllAuthorWithPageable(Pageable pageable) {
+        return jdbcTemplate.query ("SELECT * FROM Author limit ? offset ? ",getRowMapper (),
+                
+                pageable.getPageSize (),pageable.getOffset ());
+    }
+    
+    @Override
+    public List<Author> findAllBooksSortByLastName(Pageable pageable) {
+        String sql = "SELECT * FROM Author order by Last_name " + pageable.getSort ().getOrderFor ("last_name").getDirection ().name ()
+                + " limit ? offset ?";
+        
+        System.out.println (sql);
+        return jdbcTemplate.query (sql, getRowMapper (), pageable.getPageSize (), pageable.getOffset ());
     }
     
     @Override
@@ -64,6 +83,19 @@ public class AuthorDaoImpl implements AuthorDao {
         jdbcTemplate.update ("UPDATE author SET first_name = ?,last_name = ? WHERE id  = ?",
                 author.getFirstName(), author.getLastName (),author.getId ());
         return this.getById(author.getId());
+    }
+    
+    @Override
+    public List<Author> findAuthorByLastName(String lastName, Pageable pageable) {
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT * FROM author WHERE last_name = ? ");
+        if(pageable.getSort ().getOrderFor ("firstname") != null){
+            
+            sb.append ("order by first_name ").append (pageable.getSort ().getOrderFor ("firstname").getDirection ().name ());
+        }
+        sb.append (" limit ? offset ?");
+        return jdbcTemplate.query (sb.toString(),getRowMapper(),lastName,pageable.getPageSize (),pageable.getOffset ());
     }
     
     private RowMapper<Author> getRowMapper(){

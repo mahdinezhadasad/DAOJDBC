@@ -19,15 +19,15 @@ public class AuthorMapper implements RowMapper<Author> {
         author.setFirstName (rs.getString ("first_name"));
         author.setLastName (rs.getString("last_name"));
         
-        if(rs.getString ("isbn") !=null){
-            
-            author.setBooks (new ArrayList<> ());
-            author.getBooks ().add (mapBook(rs));
-        }
+//        if(rs.getString ("isbn") !=null){
+//
+//            author.setBooks (new ArrayList<> ());
+//            author.getBooks ().add (mapBook(rs));
+//        }
         
-        while(rs.next ()){
-           author.getBooks ().add(mapBook(rs));
-        }
+//        while(rs.next ()){
+//           author.getBooks ().add(mapBook(rs));
+//        }
         return author;
     }
     

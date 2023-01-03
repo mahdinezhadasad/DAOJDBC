@@ -1,8 +1,11 @@
 package com.example.demo.daoJdbcTemplate;
 
 import com.example.demo.domain.Book;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @Component
@@ -20,6 +23,22 @@ public class BookDaoImpl implements Bookdao {
       return jdbcTemplate.queryForObject("SELECT * FROM book where id = ?", getBookMapper(), id);
         
       
+    }
+    
+    @Override
+    public List<Book> findAllBooks(Pageable pageable) {
+        return jdbcTemplate.query ("SELECT * FROM book limit ? offset ? ",getBookMapper(),
+               
+               pageable.getPageSize (),pageable.getOffset ());
+    }
+    
+    @Override
+    public List<Book> findAllBooksSortByTitle(Pageable pageable) {
+        String sql = "SELECT * FROM book order by title " + pageable.getSort ().getOrderFor ("title").getDirection ().name ()
+                + " limit ? offset ?";
+    
+        System.out.println (sql);
+        return jdbcTemplate.query (sql, getBookMapper (), pageable.getPageSize (), pageable.getOffset ());
     }
     
     @Override
@@ -48,6 +67,16 @@ public class BookDaoImpl implements Bookdao {
     @Override
     public void deleteBookById(Long id) {
         jdbcTemplate.update("DELETE from book where id = ?", id);
+    }
+    
+    @Override
+    public List<Book> findAllBooks() {
+        return jdbcTemplate.query ("SELECT *  FROM book" , getBookMapper());
+    }
+    
+    @Override
+    public List<Book> findAllBooks(int pageSize, int offset) {
+        return jdbcTemplate.query ("SELECT * FROM book limit ? offset ? ",getBookMapper(),pageSize,offset);
     }
     
     private BookMapper getBookMapper(){

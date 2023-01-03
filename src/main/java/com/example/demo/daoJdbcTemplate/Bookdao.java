@@ -1,6 +1,9 @@
 package com.example.demo.daoJdbcTemplate;
 
 import com.example.demo.domain.Book;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface Bookdao {
     
@@ -14,5 +17,14 @@ public interface Bookdao {
         Book updateBook(Book book);
         
         void deleteBookById(Long id);
+        
+        
+        List<Book> findAllBooks();
+        
+        List<Book> findAllBooks(int pageSize,int offset);
+        
+        List<Book> findAllBooks(Pageable pageable);
+        
+        List<Book> findAllBooksSortByTitle(Pageable pageable);
     
 }
